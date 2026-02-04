@@ -9,7 +9,7 @@ class Sessings(BaseSettings):
         env_file=BASE_DIR / ".env",
         env_file_encoding="utf-8",
     )
-    database_url: str | None = None
+    database_url: str = ""
     app_name: str = "My API"
 
 
