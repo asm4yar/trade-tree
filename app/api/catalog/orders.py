@@ -1,3 +1,5 @@
+"""Эндпоинты для работы с заказами и их агрегатной аналитикой."""
+
 from fastapi import APIRouter, Depends, HTTPException
 from app.api.catalog.schemas import AddItemRequest, AddItemResponse, clientStatistics
 from app.db import get_db
@@ -31,6 +33,15 @@ order by
 
 @router.get("/clients/statistics", response_model=list[clientStatistics])
 def client_statistics(db: Session = Depends(get_db)):
+    """Возвращает статистику клиентов по сумме заказов.
+
+    Args:
+        db: SQLAlchemy-сессия из зависимости FastAPI.
+
+    Returns:
+        list[clientStatistics]: Имя клиента и агрегированная сумма покупок.
+    """
+
     res = db.execute(SQL_CLIENT_STATISTICS)
     rows = res.mappings().all()
     return rows
@@ -40,10 +51,19 @@ def client_statistics(db: Session = Depends(get_db)):
 def add_item_to_order(
     order_id: int, payload: AddItemRequest, db: Session = Depends(get_db)
 ):
-    """
-    Добавить товары в заказ:
-    - если позиция уже есть, увеличить qty
-    - если не хватает остатков, вернуть 409
+    """Добавляет товар в заказ и списывает остаток на складе.
+
+    Логика:
+    - если позиция уже есть, увеличивает `qty`;
+    - если товара недостаточно на складе, возвращает HTTP 409.
+
+    Args:
+        order_id: Идентификатор заказа.
+        payload: Данные о добавляемом товаре и количестве.
+        db: SQLAlchemy-сессия из зависимости FastAPI.
+
+    Returns:
+        AddItemResponse: Обновлённое количество позиции в заказе и текущий остаток.
     """
 
     order_exists = db.execute(
@@ -69,7 +89,7 @@ def add_item_to_order(
             # списываем остаток
             product.stock_qty -= payload.quantity
 
-            # upset в order_items
+            # upsert в order_items
             stmt = (
                 pg_insert(OrderItem)
                 .values(
@@ -101,5 +121,5 @@ def add_item_to_order(
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500, detail="Internet server error")

@@ -1,3 +1,5 @@
+"""Эндпоинты для аналитики по категориям каталога."""
+
 from fastapi import APIRouter, Depends
 from app.api.catalog.schemas import CategoryChildrenCountOut
 from app.db import get_db
@@ -31,6 +33,15 @@ order by
 
 @router.get("/children-count", response_model=list[CategoryChildrenCountOut])
 async def get_children_count_first_level(db: Session = Depends(get_db)):
+    """Возвращает число дочерних категорий для категорий первого уровня.
+
+    Args:
+        db: SQLAlchemy-сессия из зависимости FastAPI.
+
+    Returns:
+        list[CategoryChildrenCountOut]: Список категорий и количества их дочерних узлов.
+    """
+
     res = db.execute(SQL_CHILDREN_COUNT)
     rows = res.mappings().all()
     return rows

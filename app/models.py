@@ -1,3 +1,5 @@
+"""ORM-модели предметной области каталога и заказов."""
+
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import (
     BigInteger,
@@ -12,10 +14,14 @@ from sqlalchemy import (
 
 
 class Base(DeclarativeBase):
+    """Базовый класс для всех ORM-моделей приложения."""
+
     pass
 
 
 class Category(Base):
+    """Категория товаров с поддержкой иерархии через parent_id."""
+
     __tablename__ = "categories"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -29,6 +35,8 @@ class Category(Base):
 
 
 class Product(Base):
+    """Товар, принадлежащий категории и имеющий складской остаток."""
+
     __tablename__ = "products"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -45,6 +53,8 @@ class Product(Base):
 
 
 class Customer(Base):
+    """Покупатель, размещающий заказы в системе."""
+
     __tablename__ = "customers"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -56,6 +66,8 @@ class Customer(Base):
 
 
 class Order(Base):
+    """Заказ покупателя со статусом жизненного цикла."""
+
     __tablename__ = "orders"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -71,6 +83,8 @@ class Order(Base):
 
 
 class OrderItem(Base):
+    """Позиция заказа с количеством и зафиксированной ценой единицы товара."""
+
     __tablename__ = "order_items"
     order_id: Mapped[int] = mapped_column(
         BigInteger, ForeignKey("orders.id", ondelete="CASCADE"), primary_key=True

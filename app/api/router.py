@@ -1,3 +1,5 @@
+"""Корневой API-роутер, агрегирующий подмодули каталога."""
+
 from fastapi import APIRouter
 from app.api.catalog import routers as catalog_routers
 
