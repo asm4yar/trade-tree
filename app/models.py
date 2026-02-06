@@ -1,5 +1,14 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import BigInteger, Text, Integer, Numeric, ForeignKey, DateTime, func
+from sqlalchemy import (
+    BigInteger,
+    Text,
+    Integer,
+    Numeric,
+    ForeignKey,
+    DateTime,
+    func,
+    Index,
+)
 
 
 class Base(DeclarativeBase):
@@ -58,6 +67,8 @@ class Order(Base):
         DateTime(timezone=True), server_default=func.now()
     )
 
+    __table_args__ = (Index("ix_orders_create_at", created_at),)
+
 
 class OrderItem(Base):
     __tablename__ = "order_items"
@@ -75,3 +86,5 @@ class OrderItem(Base):
     updated_at: Mapped[object] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+    __table_args__ = (Index("ix_orders_items_order_id", order_id),)
