@@ -34,6 +34,13 @@ order by
 )
 
 
+SQL_TOP5_PRODUCTS_ORDERS = text(
+    """
+select product_name,category_level1,total_sold_qty from v_top5_products_last_30_days vtpld 
+"""
+)
+
+
 @router.get("/clients/statistics", response_model=list[clientStatistics])
 def client_statistics(db: Session = Depends(get_db)):
     """Возвращает статистику клиентов по сумме заказов.

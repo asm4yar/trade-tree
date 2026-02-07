@@ -32,3 +32,11 @@ class clientStatistics(BaseModel):
 
     name: str
     total_amount: int
+
+
+class TopProductOut(BaseModel):
+    """Топ-5 самых покупаемых товаров за последний месяц"""
+
+    product_name: str
+    category_level1: str
+    total_sold_qty: int
