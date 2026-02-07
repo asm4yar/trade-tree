@@ -2,7 +2,7 @@
 
 import logging
 from fastapi import APIRouter, Depends, HTTPException
-from app.api.catalog.schemas import AddItemRequest, AddItemResponse, clientStatistics
+from app.api.catalog.schemas import AddItemRequest, AddItemResponse, ClientStatistics
 from app.db import get_db
 from app.models import Order, Product, OrderItem
 from sqlalchemy.orm import Session
@@ -15,33 +15,22 @@ router = APIRouter(prefix="/orders", tags=["Catalog / Orders"])
 
 SQL_CLIENT_STATISTICS = text(
     """
-select
-	cs.name,
-	sum(oi.unit_price * oi.qty ) as total_amount
-from
-	orders o
-join order_items oi on
-	o.id = oi.order_id
-join customers cs on
-	o.customer_id = cs.id
-group by
-	o.customer_id,
-	cs.name
-order by
-	total_amount desc
+    select cs.name,
+           sum(oi.unit_price * oi.qty) as total_amount
+    from orders o
+             join order_items oi on
+        o.id = oi.order_id
+             join customers cs on
+        o.customer_id = cs.id
+    group by o.customer_id,
+             cs.name
+    order by total_amount desc
 
-"""
-)
-
-
-SQL_TOP5_PRODUCTS_ORDERS = text(
     """
-select product_name,category_level1,total_sold_qty from v_top5_products_last_30_days vtpld 
-"""
 )
 
 
-@router.get("/clients/statistics", response_model=list[clientStatistics])
+@router.get("/clients/statistics", response_model=list[ClientStatistics])
 def client_statistics(db: Session = Depends(get_db)):
     """Возвращает статистику клиентов по сумме заказов.
 
@@ -49,7 +38,7 @@ def client_statistics(db: Session = Depends(get_db)):
         db: SQLAlchemy-сессия из зависимости FastAPI.
 
     Returns:
-        list[clientStatistics]: Имя клиента и агрегированная сумма покупок.
+        list[ClientStatistics]: Имя клиента и агрегированная сумма покупок.
     """
 
     res = db.execute(SQL_CLIENT_STATISTICS)
@@ -59,7 +48,7 @@ def client_statistics(db: Session = Depends(get_db)):
 
 @router.post("/{order_id}/items", response_model=AddItemResponse)
 async def add_item_to_order(
-    order_id: int, payload: AddItemRequest, db: Session = Depends(get_db)
+        order_id: int, payload: AddItemRequest, db: Session = Depends(get_db)
 ):
     """Добавляет товар в заказ и списывает остаток на складе.
 

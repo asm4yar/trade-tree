@@ -1,11 +1,13 @@
 # Trade Tree
 
 `Trade Tree` — сервис на **FastAPI + PostgreSQL** для работы с каталогом товаров и заказами.
+Проект ориентирован на демонстрацию практик построения API, транзакционных операций и SQL-аналитики в e-commerce домене.
 
 Проект демонстрирует:
 - иерархию категорий (дерево);
 - операции с заказами и позициями заказа;
 - агрегатные SQL-запросы (статистика по клиентам и категориям);
+- аналитическое представление с топ-5 продуктов за последние 30 дней;
 - миграции схемы через Alembic;
 - скрипт заполнения БД тестовыми данными.
 
@@ -18,6 +20,7 @@
   - с блокировкой строки товара (`FOR UPDATE`);
   - с проверкой остатка;
   - с `upsert` в `order_items`.
+- Получить топ-5 самых продаваемых товаров за последние 30 дней.
 
 ## Структура проекта
 
@@ -28,6 +31,7 @@ trade-tree/
 │   │   ├── catalog/
 │   │   │   ├── categories.py      # эндпоинт аналитики по категориям
 │   │   │   ├── orders.py          # эндпоинты заказов и статистики
+│   │   │   ├── top_products.py    # эндпоинт топ-продуктов из SQL view
 │   │   │   └── schemas.py         # Pydantic-схемы
 │   │   └── router.py              # объединение роутеров
 │   ├── db.py                      # engine + SessionLocal + get_db
@@ -37,6 +41,7 @@ trade-tree/
 │   └── settings.py                # настройки из .env
 ├── alembic/
 │   ├── versions/001_baseline.py   # базовая миграция
+│   ├── versions/002_v_top5_products_last_30_days.py # текст запроса  view "Топ-5 самых покупаемых товаров за последний месяц"
 │   └── README.md                  # Запросы, схема БД
 ├── docker-compose.yml             # PostgreSQL
 ├── requirements.txt
@@ -224,6 +229,37 @@ curl -X POST "http://localhost:8000/api/v1/orders/1/items" \
   "new_qty": 5,
   "remaining_stock": 42
 }
+```
+
+### 4) Топ-5 продаваемых товаров за 30 дней
+
+**Endpoint**
+
+```http
+GET /api/v1/catalog/top-products
+```
+
+**curl**
+
+```bash
+curl -X GET "http://localhost:8000/api/v1/catalog/top-products"
+```
+
+**Пример ответа**
+
+```json
+[
+  {
+    "product_name": "Ноутбук X1",
+    "category_level1": "Компьютеры",
+    "total_sold_qty": 94
+  },
+  {
+    "product_name": "Смартфон Y10",
+    "category_level1": "Электроника",
+    "total_sold_qty": 77
+  }
+]
 ```
 
 **Коды ошибок**

@@ -4,6 +4,9 @@
 ![Даталогическая схема базы данных](https://raw.githubusercontent.com/asm4yar/trade-tree/main/docs/db/schema1.png)
 ![Даталогическая схема базы данных](https://raw.githubusercontent.com/asm4yar/trade-tree/main/docs/db/schema2.png)
 
+# SQL схема данных
+[--> Посмотреть SQL схему](../docs/db/schema.sql)
+
 
 ```sql
 -- Запрос на получение информации о сумме товаров заказанных под каждого приента 

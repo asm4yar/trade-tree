@@ -1,9 +1,13 @@
+"""Репозиторий запросов каталога и аналитических представлений."""
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.views import v_top5_products_last_30_days
 
 
 def get_top5_products_last_30_days(session: Session):
+    """Читает топ-5 товаров из SQL-представления по продажам за последние 30 дней."""
+
     stmt = (
         select(
             v_top5_products_last_30_days.c.product_name,

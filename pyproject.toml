@@ -1,7 +1,7 @@
 [project]
 name = "tradetree"
 version = "0.1.0"
-description = ""
+description = "FastAPI-сервис каталога и заказов с аналитикой по клиентам и топ-продуктам"
 authors = [
     {name = "ASM4YAR",email = "asm4yar@ya.ru"}
 ]

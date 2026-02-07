@@ -27,7 +27,7 @@ class CategoryChildrenCountOut(BaseModel):
     children_count: int
 
 
-class clientStatistics(BaseModel):
+class ClientStatistics(BaseModel):
     """Статистика клиента по общей сумме заказов."""
 
     name: str
@@ -35,7 +35,7 @@ class clientStatistics(BaseModel):
 
 
 class TopProductOut(BaseModel):
-    """Топ-5 самых покупаемых товаров за последний месяц"""
+    """Элемент ответа с данными о популярном товаре за последний месяц."""
 
     product_name: str
     category_level1: str
